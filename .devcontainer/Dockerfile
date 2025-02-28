@@ -27,16 +27,16 @@ RUN docker-php-ext-install \
 
 # Configure Apache
 RUN a2enmod rewrite
-RUN sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/workspace\/public/g' /etc/apache2/sites-available/000-default.conf
 
-# Update the apache configuration to allow .htaccess files
+# Change Apache document root to /var/www/html/public
+RUN sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/public/g' /etc/apache2/sites-available/000-default.conf
+
+# Update Apache configuration to be less restrictive
 RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
-
-# Give proper permissions
-RUN chown -R www-data:www-data /var/www/html
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/Options Indexes FollowSymLinks/Options Indexes FollowSymLinks MultiViews/' /etc/apache2/apache2.conf
 
 # Install MySQL client
 RUN apt-get update && apt-get install -y default-mysql-client
 
 # Set working directory
-WORKDIR /workspace
+WORKDIR /var/www/html

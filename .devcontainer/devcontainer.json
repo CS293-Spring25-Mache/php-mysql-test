@@ -2,7 +2,7 @@
   "name": "PHP 8.1 & MySQL Development",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
-  "workspaceFolder": "/workspace",
+  "workspaceFolder": "/var/www/html",
   
   "customizations": {
     "vscode": {
@@ -23,5 +23,5 @@
 
   "postCreateCommand": "chmod +x ./.devcontainer/setup-db.sh && bash ./.devcontainer/setup-db.sh",
   
-  "postStartCommand": "service apache2 restart"
+  "postStartCommand": "service apache2 restart && chmod +x ./.devcontainer/setup-db.sh && bash ./.devcontainer/setup-db.sh"
 }

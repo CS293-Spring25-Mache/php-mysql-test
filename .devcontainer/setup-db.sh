@@ -30,15 +30,58 @@ if [ -f ".devcontainer/sample-data.sql" ]; then
 fi
 
 # Set up the public directory if it doesn't exist
-mkdir -p public
-echo "<?php phpinfo(); ?>" > public/index.php
-echo "Created/updated public directory with phpinfo page"
+if [ ! -d "public" ]; then
+    mkdir -p public
+    echo "Created public directory"
+fi
 
-# Set proper permissions
-chown -R www-data:www-data /workspace
-chmod -R 755 /workspace
+# Create/update index.php if it doesn't exist
+if [ ! -f "public/index.php" ]; then
+    echo "<?php phpinfo(); ?>" > public/index.php
+    echo "Created phpinfo page"
+fi
 
-# Ensure Apache is running
+# Create a basic database test file
+cat > public/db-test.php << 'EOF'
+<?php
+$host = 'db';
+$dbname = 'studentdb';
+$user = 'student';
+$pass = 'studentpass';
+
+try {
+    $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "<h1>Database Connection Successful!</h1>";
+    
+    // Fetch some data
+    $stmt = $conn->query("SELECT * FROM users LIMIT 5");
+    echo "<h2>Sample User Data:</h2>";
+    echo "<table border='1'><tr><th>ID</th><th>Username</th><th>Email</th><th>Created</th></tr>";
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo "<tr>";
+        echo "<td>".$row['id']."</td>";
+        echo "<td>".$row['username']."</td>";
+        echo "<td>".$row['email']."</td>";
+        echo "<td>".$row['created_at']."</td>";
+        echo "</tr>";
+    }
+    echo "</table>";
+} catch(PDOException $e) {
+    echo "<h1>Connection failed:</h1>";
+    echo "<p>" . $e->getMessage() . "</p>";
+}
+EOF
+echo "Created database test file"
+
+# Set proper permissions - CRITICAL STEP
+echo "Setting proper permissions..."
+chown -R www-data:www-data /var/www/html
+find /var/www/html -type d -exec chmod 755 {} \;
+find /var/www/html -type f -exec chmod 644 {} \;
+
+# Restart Apache to apply changes
+echo "Restarting Apache..."
 service apache2 restart
 
-echo "Setup completed!"
+echo "Setup completed successfully!"

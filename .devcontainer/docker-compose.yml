@@ -6,10 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ..:/workspace:cached
+      - ../:/var/www/html:cached
     ports:
       - "80:80"
-    command: /bin/sh -c "service apache2 start && sleep infinity"
     environment:
       - MYSQL_HOST=db
       - MYSQL_USER=student
