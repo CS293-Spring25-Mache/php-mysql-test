@@ -2,7 +2,7 @@
     "name": "PHP & MySQL Dev Container",
     "dockerComposeFile": "docker-compose.yml",
     "service": "php",
-    "workspaceFolder": "/workspace",
+    "workspaceFolder": "/var/www/html",
     "extensions": [
       "bmewburn.vscode-intelephense-client",
       "ms-mysql.mysql"
