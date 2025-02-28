@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ..:/workspace:cached
+      - ..:/var/www/html:cached  # Ensure this is correctly set
     depends_on:
       - mysql
     environment:
