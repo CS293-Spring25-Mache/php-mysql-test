@@ -2,34 +2,29 @@ version: '3'
 
 services:
   app:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    image: mcr.microsoft.com/devcontainers/php:0-8.1
     volumes:
-      - ../:/var/www/html:cached
-    ports:
-      - "80:80"
+      - ..:/workspaces/${localWorkspaceFolderBasename}:cached
+    command: sleep infinity
+    network_mode: service:db
     environment:
       - MYSQL_HOST=db
       - MYSQL_USER=student
       - MYSQL_PASSWORD=studentpass
       - MYSQL_DATABASE=studentdb
-    depends_on:
-      - db
 
   db:
     image: mysql:8.0
     restart: unless-stopped
-    ports:
-      - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./init-db:/docker-entrypoint-initdb.d
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
       - MYSQL_DATABASE=studentdb
       - MYSQL_USER=student
       - MYSQL_PASSWORD=studentpass
+    cap_add:
+      - SYS_NICE
 
 volumes:
   mysql-data:
