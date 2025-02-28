@@ -7,19 +7,22 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ..:/workspace:cached
-    command: sleep infinity
+    ports:
+      - "80:80"
+    command: /bin/sh -c "service apache2 start && sleep infinity"
     environment:
       - MYSQL_HOST=db
       - MYSQL_USER=student
       - MYSQL_PASSWORD=studentpass
       - MYSQL_DATABASE=studentdb
-    network_mode: service:db
     depends_on:
       - db
 
   db:
     image: mysql:8.0
     restart: unless-stopped
+    ports:
+      - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       - ./init-db:/docker-entrypoint-initdb.d

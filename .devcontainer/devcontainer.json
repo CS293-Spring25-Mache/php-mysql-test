@@ -21,5 +21,7 @@
   
   "forwardPorts": [80, 3306],
 
-  "postCreateCommand": "bash ./.devcontainer/setup-db.sh"
+  "postCreateCommand": "chmod +x ./.devcontainer/setup-db.sh && bash ./.devcontainer/setup-db.sh",
+  
+  "postStartCommand": "service apache2 restart"
 }
