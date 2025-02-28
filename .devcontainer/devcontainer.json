@@ -1,23 +1,14 @@
-#!/bin/bash
-
-# Install Apache
-sudo apt-get update
-sudo apt-get install -y apache2
-
-# Configure Apache
-sudo a2enmod rewrite
-echo "
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    DocumentRoot /workspaces/${PWD##*/}/public
-    
-    <Directory /workspaces/${PWD##*/}/public>
-        Options Indexes FollowSymLinks
-        AllowOverride All
-        Require all granted
-    </Directory>
-    
-    ErrorLog \${APACHE_LOG_DIR}/error.log
-    CustomLog \${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-" | sudo
+{
+    "name": "PHP & MySQL Dev Container",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "php",
+    "workspaceFolder": "/workspace",
+    "extensions": [
+      "bmewburn.vscode-intelephense-client",
+      "ms-mysql.mysql"
+    ],
+    "forwardPorts": [3306, 8080],
+    "postCreateCommand": "composer install",
+    "remoteUser": "vscode"
+  }
+  

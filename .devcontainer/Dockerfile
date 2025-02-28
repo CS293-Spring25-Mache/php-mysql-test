@@ -1,42 +1,14 @@
 FROM php:8.1-apache
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    zip \
-    unzip \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     libzip-dev \
-    libicu-dev \
-    libonig-dev \
-    libxml2-dev
+    unzip \
+    mariadb-client \
+    && docker-php-ext-install pdo pdo_mysql mysqli gd zip
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN docker-php-ext-enable pdo_mysql
 
-# Install PHP extensions
-RUN docker-php-ext-install \
-    pdo_mysql \
-    mysqli \
-    zip \
-    intl \
-    mbstring \
-    exif \
-    pcntl \
-    xml
-
-# Configure Apache
-RUN a2enmod rewrite
-
-# Change Apache document root to /var/www/html/public
-RUN sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/public/g' /etc/apache2/sites-available/000-default.conf
-
-# Update Apache configuration to be less restrictive
-RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
-RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/Options Indexes FollowSymLinks/Options Indexes FollowSymLinks MultiViews/' /etc/apache2/apache2.conf
-
-# Install MySQL client
-RUN apt-get update && apt-get install -y default-mysql-client
-
-# Set working directory
 WORKDIR /var/www/html
